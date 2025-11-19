@@ -1,0 +1,5 @@
+{
+  "name": "RefineryWatch: Russian Infrastructure Tracker",
+  "description": "An OSINT-style interactive map tracking the status of Russian oil refineries, highlighting facilities impacted by drone attacks and sabotage events since 2022. Uses Gemini with Google Search Grounding to retrieve the latest incident reports.",
+  "requestFramePermissions": []
+}
