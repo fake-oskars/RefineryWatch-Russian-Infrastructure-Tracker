@@ -127,44 +127,57 @@ export default function Sidebar({
 
     const loadWidget = () => {
       const w = window as any;
+      // Check if twttr is ready
       if (w.twttr && w.twttr.widgets) {
-        w.twttr.widgets.createTweet(
-          tweetId,
-          currentContainer,
-          {
-            theme: 'dark',
-            conversation: 'none',
-            dnt: true,
-            align: 'center'
-          }
-        ).then((el: any) => {
-          if (!el && currentContainer) {
-             // Fallback if widget refuses to render (e.g. age restricted or deleted)
-             currentContainer.innerHTML = `
-               <div class="flex flex-col items-center justify-center h-full min-h-[150px] text-center p-4">
-                  <p class="text-slate-400 text-sm mb-2">Preview unavailable</p>
-                  <p class="text-xs text-slate-500">Content may be sensitive or age-restricted.</p>
-               </div>
-             `;
-          }
+        w.twttr.ready(() => {
+            w.twttr.widgets.createTweet(
+            tweetId,
+            currentContainer,
+            {
+                theme: 'dark',
+                conversation: 'none',
+                dnt: true,
+                align: 'center'
+            }
+            ).then((el: any) => {
+            if (!el && currentContainer) {
+                // Fallback if widget refuses to render (e.g. age restricted or deleted)
+                currentContainer.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full min-h-[150px] text-center p-4">
+                    <p class="text-slate-400 text-sm mb-2">Preview unavailable</p>
+                    <p class="text-xs text-slate-500">Content may be sensitive or age-restricted.</p>
+                </div>
+                `;
+            }
+            });
         });
       }
     };
 
     // If script is ready, load immediately
-    if ((window as any).twttr) {
+    if ((window as any).twttr && (window as any).twttr.widgets) {
       loadWidget();
     } else {
       // Poll for the script if it hasn't loaded yet (e.g. on slow connections)
       const interval = setInterval(() => {
-        if ((window as any).twttr) {
+        if ((window as any).twttr && (window as any).twttr.widgets) {
           clearInterval(interval);
           loadWidget();
         }
       }, 200);
       
       // Stop polling after 5 seconds
-      const timeout = setTimeout(() => clearInterval(interval), 5000);
+      const timeout = setTimeout(() => {
+          clearInterval(interval);
+          if (currentContainer.innerHTML === '') {
+               currentContainer.innerHTML = `
+               <div class="flex flex-col items-center justify-center h-full min-h-[150px] text-center p-4">
+                  <p class="text-slate-400 text-sm mb-2">Widget failed to load</p>
+                  <p class="text-xs text-slate-500">Please check your connection.</p>
+               </div>
+             `;
+          }
+      }, 5000);
       
       return () => {
         clearInterval(interval);
