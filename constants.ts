@@ -131,7 +131,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     description: 'Capacity: 5.0 mln tons/year. Rostov region. Targeted 13.03.2024 and 06.06.2024. Operations unstable due to repeated threats.',
     lastIncidentDate: '2024-06-06',
     capacity: '5.0 mln t/y',
-    incidentVideoUrl: 'https://twitter.com/Tendar/status/1767760002429104233'
+    incidentVideoUrl: undefined
   },
   {
     id: 'volgograd',
@@ -166,6 +166,16 @@ export const INITIAL_REFINERIES: Refinery[] = [
   },
 
   // --- URALS & SIBERIA (Strategic Depth) ---
+  {
+    id: 'rostovka-gas',
+    name: 'Rostovka Gas Pipeline Hub',
+    lat: 54.9600,
+    lng: 73.5600,
+    status: RefineryStatus.DAMAGED,
+    description: 'Large gas pipeline explosion reported in Rostovka, Omsk region. Visual evidence confirms significant fire.',
+    lastIncidentDate: '2024-11-19',
+    incidentVideoUrl: 'https://x.com/Tendar/status/1990635526005592201'
+  },
   {
     id: 'omsk',
     name: 'Omsk Refinery (Gazprom Neft)',
@@ -237,7 +247,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     description: 'Capacity: 13.1 mln tons/year. Deep in Urals. Operational.',
     capacity: '13.1 mln t/y'
   },
-  
+
   // --- NORTH & WEST ---
   {
     id: 'kirishi',
