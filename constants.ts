@@ -12,7 +12,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     description: 'Capacity: 17.1 mln tons/year. One of Russia’s largest refineries supplying Moscow. Struck by multiple drones in March (13.03.2024) and May 2024, causing fires in the primary crude processing units (AVT-6). Operating at reduced capacity.',
     lastIncidentDate: '2024-05-01',
     capacity: '17.1 mln t/y',
-    incidentVideoUrl: 'https://twitter.com/Tendar/status/1767834045966537109'
+    incidentVideoUrls: ['https://x.com/Osinttechnical/status/1798511326178025561']
   },
   {
     id: 'nizhny-novgorod',
@@ -23,7 +23,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     description: 'Capacity: 17.0 mln tons/year. Key producer of gasoline (11% of RU total). AVT-6 and FCC units damaged by drone strikes on 12.03.2024. Repairs hampered by sanctions restricting access to western components.',
     lastIncidentDate: '2024-03-12',
     capacity: '17.0 mln t/y',
-    incidentVideoUrl: 'https://twitter.com/Tendar/status/1767468232252227665'
+    incidentVideoUrls: ['https://twitter.com/Tendar/status/1767468232252227665']
   },
   {
     id: 'syzran',
@@ -34,7 +34,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     description: 'Capacity: 7.0 mln tons/year. Located in Samara region. Major fire on 16.03.2024 after drone strikes targeted the AVT-6 distillation unit.',
     lastIncidentDate: '2024-03-16',
     capacity: '7.0 mln t/y',
-    incidentVideoUrl: 'https://twitter.com/Tendar/status/1768904967779205279'
+    incidentVideoUrls: ['https://twitter.com/Tendar/status/1768904967779205279']
   },
   {
     id: 'kuibyshev',
@@ -45,7 +45,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     description: 'Capacity: 7.0 mln tons/year. Samara region. CDU-5 primary refining unit knocked out on 23.03.2024. Reports suggest the refinery halted production completely for a period.',
     lastIncidentDate: '2024-03-23',
     capacity: '7.0 mln t/y',
-    incidentVideoUrl: 'https://twitter.com/Tendar/status/1771419624700096643'
+    incidentVideoUrls: ['https://twitter.com/Tendar/status/1771419624700096643']
   },
   {
     id: 'novokuybyshevsk',
@@ -98,7 +98,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     description: 'Capacity: 9.0 mln tons/year. Major export refinery on Black Sea. Hit on 24.01.2024, 17.05.2024, and 22.07.2024. Vacuum distillation unit damaged, halting operations repeatedly.',
     lastIncidentDate: '2024-07-22',
     capacity: '9.0 mln t/y',
-    incidentVideoUrl: 'https://twitter.com/Tendar/status/1791342515672166783'
+    incidentVideoUrls: ['https://twitter.com/Tendar/status/1791342515672166783']
   },
   {
     id: 'slavyansk',
@@ -109,7 +109,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     description: 'Capacity: 4.0 mln tons/year. Export-oriented. Hit on 17.03.2024 and massive strike on 19.05.2024 forced suspension of operations.',
     lastIncidentDate: '2024-05-19',
     capacity: '4.0 mln t/y',
-    incidentVideoUrl: 'https://twitter.com/Tendar/status/1769233968079073734'
+    incidentVideoUrls: ['https://twitter.com/Tendar/status/1769233968079073734']
   },
   {
     id: 'ilsky',
@@ -120,7 +120,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     description: 'Capacity: 6.6 mln tons/year. Krasnodar region. Hit on 09.02.2024 and 27.04.2024. Primary processing units (CDU-5) damaged.',
     lastIncidentDate: '2024-04-27',
     capacity: '6.6 mln t/y',
-    incidentVideoUrl: 'https://twitter.com/Tendar/status/1755858141744701789'
+    incidentVideoUrls: ['https://twitter.com/Tendar/status/1755858141744701789']
   },
   {
     id: 'novoshakhtinsk',
@@ -131,7 +131,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     description: 'Capacity: 5.0 mln tons/year. Rostov region. Targeted 13.03.2024 and 06.06.2024. Operations unstable due to repeated threats.',
     lastIncidentDate: '2024-06-06',
     capacity: '5.0 mln t/y',
-    incidentVideoUrl: undefined
+
   },
   {
     id: 'volgograd',
@@ -142,7 +142,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     description: 'Capacity: 14.5 mln tons/year. Largest in Southern Russia. Fire on 03.02.2024 and attack on 12.05.2024. Repairs reportedly completed.',
     lastIncidentDate: '2024-05-12',
     capacity: '14.5 mln t/y',
-    incidentVideoUrl: 'https://twitter.com/Tendar/status/1753669959921885239'
+    incidentVideoUrls: ['https://twitter.com/Tendar/status/1753669959921885239']
   },
   {
     id: 'afipsky',
@@ -173,8 +173,8 @@ export const INITIAL_REFINERIES: Refinery[] = [
     lng: 73.5600,
     status: RefineryStatus.DAMAGED,
     description: 'Large gas pipeline explosion reported in Rostovka, Omsk region. Visual evidence confirms significant fire.',
-    lastIncidentDate: '2024-11-19',
-    incidentVideoUrl: 'https://x.com/Tendar/status/1990635526005592201'
+    lastIncidentDate: '2025-11-18',
+    incidentVideoUrls: ['https://x.com/Tendar/status/1990635526005592201']
   },
   {
     id: 'omsk',
@@ -185,7 +185,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     description: 'Capacity: 21.0 mln tons/year. Russia’s largest refinery. Major explosion and fire in the AVT-10 unit on 26.08.2024, reportedly taking out nearly half its capacity temporarily.',
     lastIncidentDate: '2024-08-26',
     capacity: '21.0 mln t/y',
-    incidentVideoUrl: 'https://twitter.com/Tendar/status/1828045885489209357'
+    incidentVideoUrls: ['https://twitter.com/Tendar/status/1828045885489209357']
   },
   {
     id: 'bashneft-ufa',
@@ -216,7 +216,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     description: 'Capacity: 8.7 mln tons/year. Nizhnekamsk, Tatarstan. Struck on 02.04.2024. CDU-7 unit caught fire.',
     lastIncidentDate: '2024-04-02',
     capacity: '8.7 mln t/y',
-    incidentVideoUrl: 'https://twitter.com/Tendar/status/1775062135348211731'
+    incidentVideoUrls: ['https://twitter.com/Tendar/status/1775062135348211731']
   },
   {
     id: 'taif-nk',

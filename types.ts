@@ -17,7 +17,15 @@ export interface Refinery {
   description: string;
   lastIncidentDate?: string; // ISO string or approximate "March 2024"
   capacity?: string; // e.g., "Barrels per day" if available
-  incidentVideoUrl?: string; // URL to X.com/Twitter post with video
+  incidentVideoUrls?: string[]; // Array of URLs to X.com/Twitter posts with video
+}
+
+export interface RefineryUpdate {
+  id: string;
+  status: RefineryStatus;
+  lastIncidentDate?: string;
+  description: string;
+  incidentVideoUrls?: string[];
 }
 
 export interface Pipeline {
