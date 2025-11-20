@@ -23,10 +23,10 @@ export default function Map({ refineries, pipelines, selectedId, onSelect }: Map
 
     // Initialize map with a view centered to show both Ukraine and Western Russia
     const map = L.map(mapContainerRef.current, {
-        zoomControl: false,
-        attributionControl: false
+      zoomControl: false,
+      attributionControl: false
     }).setView([50.0, 38.0], 5); // Centered between UA/RU
-    
+
     // CartoDB Dark Matter Tiles
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
@@ -37,7 +37,7 @@ export default function Map({ refineries, pipelines, selectedId, onSelect }: Map
     L.control.zoom({ position: 'topright' }).addTo(map);
 
     // --- Load Borders ---
-    
+
     // Load Ukraine
     fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries/UKR.geo.json')
       .then(r => r.json())
@@ -91,7 +91,7 @@ export default function Map({ refineries, pipelines, selectedId, onSelect }: Map
 
     pipelines.forEach(pipeline => {
       const color = pipeline.type === 'oil' ? '#f59e0b' : '#0ea5e9'; // Amber-500 (Oil) vs Sky-500 (Gas)
-      
+
       const polyline = L.polyline(pipeline.coordinates, {
         color: color,
         weight: 3,
@@ -125,7 +125,7 @@ export default function Map({ refineries, pipelines, selectedId, onSelect }: Map
     refineries.forEach(refinery => {
       const color = getStatusColor(refinery.status);
       const isSelected = refinery.id === selectedId;
-      
+
       // Pulse for Damaged or Offline Statuses
       const shouldPulse = !isSelected && (refinery.status === RefineryStatus.OFFLINE || refinery.status === RefineryStatus.DAMAGED);
       const pulseHtml = shouldPulse ? `<div class="marker-pulse" style="box-shadow: 0 0 8px 2px ${color};"></div>` : '';
@@ -157,25 +157,39 @@ export default function Map({ refineries, pipelines, selectedId, onSelect }: Map
       const marker = L.marker([refinery.lat, refinery.lng], { icon })
         .addTo(map)
         .bindTooltip(refinery.name, {
-            direction: 'top',
-            offset: [0, -10],
-            opacity: 0.9,
-            className: 'bg-slate-900 text-white border border-slate-700 px-2 py-1 rounded text-xs font-bold'
+          direction: 'top',
+          offset: [0, -10],
+          opacity: 0.9,
+          className: 'bg-slate-900 text-white border border-slate-700 px-2 py-1 rounded text-xs font-bold'
         })
         .on('click', () => {
-            onSelect(refinery.id);
-            
-            // Adjust FlyTo based on screen size
-            const isMobile = window.innerWidth < 768;
-            const targetLat = isMobile ? refinery.lat - 1.5 : refinery.lat;
-            
-            map.flyTo([targetLat, refinery.lng], 7, { duration: 1.5 });
+          onSelect(refinery.id);
+
+          // Adjust FlyTo based on screen size
+          const isMobile = window.innerWidth < 768;
+          const targetLat = isMobile ? refinery.lat - 1.5 : refinery.lat;
+
+          map.flyTo([targetLat, refinery.lng], 7, { duration: 1.5 });
         });
 
       markersRef.current.push(marker);
     });
 
   }, [refineries, selectedId, onSelect]);
+
+  // Fly to selected refinery when selectedId changes
+  useEffect(() => {
+    if (!mapInstanceRef.current || !selectedId) return;
+
+    const selectedRefinery = refineries.find(r => r.id === selectedId);
+    if (!selectedRefinery) return;
+
+    const map = mapInstanceRef.current;
+    const isMobile = window.innerWidth < 768;
+    const targetLat = isMobile ? selectedRefinery.lat - 1.5 : selectedRefinery.lat;
+
+    map.flyTo([targetLat, selectedRefinery.lng], 7, { duration: 1.5 });
+  }, [selectedId, refineries]);
 
   function getStatusColor(status: RefineryStatus) {
     switch (status) {

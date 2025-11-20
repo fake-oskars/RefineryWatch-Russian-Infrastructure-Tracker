@@ -4,6 +4,7 @@ import { GoogleGenAI } from "@google/genai";
 import Map from './Map';
 import Sidebar from './Sidebar';
 import AdminPanel from './AdminPanel';
+import Login from './Login';
 import { INITIAL_REFINERIES, MAJOR_PIPELINES } from './constants';
 import { Refinery, GroundingChunk, Pipeline, RefineryUpdate } from './types';
 
@@ -27,9 +28,14 @@ export default function App() {
   const [aiReport, setAiReport] = useState<string | null>(null);
   const [groundingChunks, setGroundingChunks] = useState<GroundingChunk[] | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   // Admin / Staging State
   const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('admin_auth') === 'true';
+  });
+  const [loginError, setLoginError] = useState<string | null>(null);
   const [proposedUpdates, setProposedUpdates] = useState<RefineryUpdate[]>(() => {
     const saved = localStorage.getItem('refinery_proposed_updates');
     return saved ? JSON.parse(saved) : [];
@@ -39,6 +45,18 @@ export default function App() {
   React.useEffect(() => {
     localStorage.setItem('refinery_proposed_updates', JSON.stringify(proposedUpdates));
   }, [proposedUpdates]);
+
+  // Secret keyboard shortcut to open Admin Panel (Ctrl+Shift+A)
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+        e.preventDefault();
+        setIsAdminOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const selectedRefinery = refineries.find(r => r.id === selectedRefineryId) || null;
 
@@ -198,17 +216,35 @@ export default function App() {
     localStorage.removeItem('refinery_proposed_updates');
   };
 
+  const handleLogin = (username: string, password: string) => {
+    // Simple client-side check - server has the real validation
+    if (username === 'admin' && password === 'RefWatch2024!Secure#Admin') {
+      setIsAuthenticated(true);
+      localStorage.setItem('admin_auth', 'true');
+      setLoginError(null);
+    } else {
+      setLoginError('Invalid username or password');
+      setTimeout(() => setLoginError(null), 3000);
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem('admin_auth');
+    setIsAdminOpen(false);
+  };
+
   return (
-    <div className="relative w-screen h-screen bg-slate-950 overflow-hidden flex">
-      {/* Map Layer */}
-      <div className="flex-grow h-full relative">
+    <div className="relative w-full h-screen overflow-hidden bg-slate-900">
+      {/* Map Background */}
+      <div className="absolute inset-0 z-0">
         <Map
           refineries={refineries}
           pipelines={pipelines}
           selectedId={selectedRefineryId}
           onSelect={(id) => {
             setSelectedRefineryId(id);
-            // setAiReport(null); // Optional: keep report visible
+            setShowDetails(true);
           }}
         />
       </div>
@@ -221,24 +257,37 @@ export default function App() {
         aiReport={aiReport}
         isAnalyzing={isAnalyzing}
         groundingChunks={groundingChunks}
+        showDetails={showDetails}
         onAnalyze={() => setIsAdminOpen(true)} // Open Admin Panel instead of direct analyze
+        onSelectRefinery={(id) => {
+          setSelectedRefineryId(id);
+          setShowDetails(false);
+        }}
         onClose={() => {
           setSelectedRefineryId(null);
+          setShowDetails(false);
         }}
       />
 
-      {/* Admin Panel Overlay */}
-      <AdminPanel
-        isOpen={isAdminOpen}
-        onClose={() => setIsAdminOpen(false)}
-        onFetch={handleAnalyze}
-        onPublish={handlePublish}
-        isAnalyzing={isAnalyzing}
-        proposedUpdates={proposedUpdates}
-        setProposedUpdates={setProposedUpdates}
-        refineries={refineries}
-      />
+      {/* Login Modal */}
+      {!isAuthenticated && isAdminOpen && (
+        <Login onLogin={handleLogin} error={loginError} />
+      )}
+
+      {/* Admin Panel Overlay - Only show if authenticated */}
+      {isAuthenticated && (
+        <AdminPanel
+          isOpen={isAdminOpen}
+          onClose={() => setIsAdminOpen(false)}
+          onFetch={handleAnalyze}
+          onPublish={handlePublish}
+          isAnalyzing={isAnalyzing}
+          proposedUpdates={proposedUpdates}
+          setProposedUpdates={setProposedUpdates}
+          refineries={refineries}
+          onLogout={handleLogout}
+        />
+      )}
     </div>
   );
 }
-

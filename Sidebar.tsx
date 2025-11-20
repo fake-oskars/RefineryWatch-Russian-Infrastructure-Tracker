@@ -11,6 +11,8 @@ interface SidebarProps {
   onAnalyze: () => void;
   onClose: () => void;
   groundingChunks: GroundingChunk[] | null;
+  onSelectRefinery: (id: string) => void;
+  showDetails: boolean;
 }
 
 // Reusable badge component for consistent status display
@@ -123,27 +125,36 @@ export default function Sidebar({
   isAnalyzing,
   onAnalyze,
   onClose,
-  groundingChunks
+  groundingChunks,
+  onSelectRefinery,
+  showDetails
 }: SidebarProps) {
   // Default to minimized so the map is the primary view initially
   const [isMinimized, setIsMinimized] = useState(true);
   const [pipelineFilter, setPipelineFilter] = useState<'all' | 'operational' | 'suspended' | 'destroyed'>('all');
+  const [refineryFilter, setRefineryFilter] = useState<'all' | 'Operational' | 'Damaged' | 'Offline'>('all');
+  const [activeTab, setActiveTab] = useState<'refineries' | 'pipelines'>('refineries');
 
 
   // Compute Statistics
   const stats = useMemo(() => {
-    const total = refineries.length;
-    const offline = refineries.filter(r => r.status === RefineryStatus.OFFLINE).length;
-    const damaged = refineries.filter(r => r.status === RefineryStatus.DAMAGED).length;
     const operational = refineries.filter(r => r.status === RefineryStatus.OPERATIONAL).length;
-    const impactPercentage = total > 0 ? Math.round(((offline + damaged) / total) * 100) : 0;
+    const damaged = refineries.filter(r => r.status === RefineryStatus.DAMAGED).length;
+    const offline = refineries.filter(r => r.status === RefineryStatus.OFFLINE).length;
+    const total = refineries.length;
+    const impacted = damaged + offline;
+    const impactPercentage = total > 0 ? Math.round((impacted / total) * 100) : 0;
 
-    return { total, offline, damaged, operational, impactPercentage };
+    return { operational, damaged, offline, total, impacted, impactPercentage };
   }, [refineries]);
 
   const filteredPipelines = useMemo(() => {
     return pipelines.filter(p => pipelineFilter === 'all' || p.status === pipelineFilter);
   }, [pipelines, pipelineFilter]);
+
+  const filteredRefineries = useMemo(() => {
+    return refineries.filter(r => refineryFilter === 'all' || r.status === refineryFilter);
+  }, [refineries, refineryFilter]);
 
   // Helper to extract Tweet ID from URL
   const getTweetId = (url: string) => {
@@ -152,7 +163,8 @@ export default function Sidebar({
   };
 
   // Initial "Landing" State (No selection, no analysis)
-  if (!selectedRefinery && !aiReport && !isAnalyzing) {
+  // Initial "Landing" State (No selection, no analysis) OR List View when details hidden
+  if ((!selectedRefinery || !showDetails) && !aiReport && !isAnalyzing) {
 
     if (isMinimized) {
       return (
@@ -191,15 +203,6 @@ export default function Sidebar({
           </div>
 
           <div className="flex gap-2 items-start">
-            {/* Admin Button */}
-            <button
-              onClick={onAnalyze}
-              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold uppercase tracking-wider rounded border border-slate-700 transition-all flex items-center gap-2"
-            >
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-              Admin
-            </button>
-
             {/* Minimize Button */}
             <button
               onClick={() => setIsMinimized(true)}
@@ -233,58 +236,144 @@ export default function Sidebar({
           </div>
         </div>
 
-        {/* Strategic Pipelines Section */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Strategic Pipelines</h4>
-            <div className="flex bg-slate-800 rounded-lg p-0.5 border border-slate-700">
-              <button
-                onClick={() => setPipelineFilter('all')}
-                className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-md transition-all ${pipelineFilter === 'all' ? 'bg-slate-600 text-white' : 'text-slate-400 hover:text-slate-300'}`}
-              >
-                All
-              </button>
-              <button
-                onClick={() => setPipelineFilter('operational')}
-                className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-md transition-all ${pipelineFilter === 'operational' ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-slate-300'}`}
-              >
-                Active
-              </button>
-              <button
-                onClick={() => setPipelineFilter('destroyed')}
-                className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-md transition-all ${pipelineFilter === 'destroyed' ? 'bg-red-600 text-white' : 'text-slate-400 hover:text-slate-300'}`}
-              >
-                Hit
-              </button>
-            </div>
-          </div>
+        {/* Tabs Navigation */}
+        <div className="flex mb-4 border-b border-slate-800">
+          <button
+            onClick={() => setActiveTab('refineries')}
+            className={`flex-1 pb-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 ${activeTab === 'refineries'
+              ? 'text-indigo-400 border-indigo-500'
+              : 'text-slate-500 border-transparent hover:text-slate-300'
+              }`}
+          >
+            Oil Refineries
+          </button>
+          <button
+            onClick={() => setActiveTab('pipelines')}
+            className={`flex-1 pb-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 ${activeTab === 'pipelines'
+              ? 'text-indigo-400 border-indigo-500'
+              : 'text-slate-500 border-transparent hover:text-slate-300'
+              }`}
+          >
+            Pipelines
+          </button>
+        </div>
 
-          <div className="space-y-2 max-h-48 overflow-y-auto custom-scrollbar pr-1">
-            {filteredPipelines.length === 0 && (
-              <p className="text-xs text-slate-500 text-center py-4 italic">No pipelines match filter</p>
-            )}
-            {filteredPipelines.map(pipeline => (
-              <div key={pipeline.id} className="flex items-center justify-between bg-slate-800/50 p-2 rounded border border-slate-800 hover:border-slate-700 transition-colors">
-                <div className="flex items-center gap-3">
-                  <div className={`w-1.5 h-8 rounded-full ${pipeline.type === 'oil' ? 'bg-amber-500' : 'bg-sky-500'}`}></div>
-                  <div>
-                    <div className="text-xs font-bold text-slate-200">{pipeline.name}</div>
-                    <div className="text-[10px] text-slate-500 uppercase tracking-wide">{pipeline.type}</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className={`w-1.5 h-1.5 rounded-full ${pipeline.status === 'operational' ? 'bg-emerald-500' :
-                    pipeline.status === 'destroyed' ? 'bg-red-500' : 'bg-orange-500'
-                    }`}></span>
-                  <span className={`text-[10px] font-bold uppercase ${pipeline.status === 'operational' ? 'text-emerald-500' :
-                    pipeline.status === 'destroyed' ? 'text-red-500' : 'text-orange-500'
-                    }`}>
-                    {pipeline.status === 'destroyed' ? 'Destroyed' : pipeline.status}
-                  </span>
+        {/* Tab Content */}
+        <div className="mb-6 flex-1 overflow-hidden flex flex-col">
+          {activeTab === 'pipelines' ? (
+            <div className="flex-1 flex flex-col min-h-0">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Strategic Pipelines</h4>
+                <div className="flex bg-slate-800 rounded-lg p-0.5 border border-slate-700">
+                  <button
+                    onClick={() => setPipelineFilter('all')}
+                    className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-md transition-all ${pipelineFilter === 'all' ? 'bg-slate-600 text-white' : 'text-slate-400 hover:text-slate-300'}`}
+                  >
+                    All
+                  </button>
+                  <button
+                    onClick={() => setPipelineFilter('operational')}
+                    className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-md transition-all ${pipelineFilter === 'operational' ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-slate-300'}`}
+                  >
+                    Active
+                  </button>
+                  <button
+                    onClick={() => setPipelineFilter('destroyed')}
+                    className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-md transition-all ${pipelineFilter === 'destroyed' ? 'bg-red-600 text-white' : 'text-slate-400 hover:text-slate-300'}`}
+                  >
+                    Hit
+                  </button>
                 </div>
               </div>
-            ))}
-          </div>
+
+              <div className="space-y-2 overflow-y-auto custom-scrollbar pr-1 flex-1">
+                {filteredPipelines.length === 0 && (
+                  <p className="text-xs text-slate-500 text-center py-4 italic">No pipelines match filter</p>
+                )}
+                {filteredPipelines.map(pipeline => (
+                  <div key={pipeline.id} className="flex items-center justify-between bg-slate-800/50 p-2 rounded border border-slate-800 hover:border-slate-700 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-1.5 h-8 rounded-full ${pipeline.type === 'oil' ? 'bg-amber-500' : 'bg-sky-500'}`}></div>
+                      <div>
+                        <div className="text-xs font-bold text-slate-200">{pipeline.name}</div>
+                        <div className="text-[10px] text-slate-500 uppercase tracking-wide">{pipeline.type}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className={`w-1.5 h-1.5 rounded-full ${pipeline.status === 'operational' ? 'bg-emerald-500' :
+                        pipeline.status === 'destroyed' ? 'bg-red-500' : 'bg-orange-500'
+                        }`}></span>
+                      <span className={`text-[10px] font-bold uppercase ${pipeline.status === 'operational' ? 'text-emerald-500' :
+                        pipeline.status === 'destroyed' ? 'text-red-500' : 'text-orange-500'
+                        }`}>
+                        {pipeline.status === 'destroyed' ? 'Destroyed' : pipeline.status}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="flex-1 flex flex-col min-h-0">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Oil Refineries</h4>
+                <div className="flex bg-slate-800 rounded-lg p-0.5 border border-slate-700">
+                  <button
+                    onClick={() => setRefineryFilter('all')}
+                    className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-md transition-all ${refineryFilter === 'all' ? 'bg-slate-600 text-white' : 'text-slate-400 hover:text-slate-300'}`}
+                  >
+                    All
+                  </button>
+                  <button
+                    onClick={() => setRefineryFilter('Operational')}
+                    className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-md transition-all ${refineryFilter === 'Operational' ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-slate-300'}`}
+                  >
+                    Active
+                  </button>
+                  <button
+                    onClick={() => setRefineryFilter('Damaged')}
+                    className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-md transition-all ${refineryFilter === 'Damaged' ? 'bg-orange-600 text-white' : 'text-slate-400 hover:text-slate-300'}`}
+                  >
+                    Damaged
+                  </button>
+                  <button
+                    onClick={() => setRefineryFilter('Offline')}
+                    className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-md transition-all ${refineryFilter === 'Offline' ? 'bg-red-600 text-white' : 'text-slate-400 hover:text-slate-300'}`}
+                  >
+                    Offline
+                  </button>
+                </div>
+              </div>
+              <div className="space-y-2 overflow-y-auto custom-scrollbar pr-1 flex-1">
+                {filteredRefineries.length === 0 && (
+                  <p className="text-xs text-slate-500 text-center py-4 italic">No refineries match filter</p>
+                )}
+                {filteredRefineries.map(refinery => (
+                  <button
+                    key={refinery.id}
+                    onClick={() => onSelectRefinery(refinery.id)}
+                    className={`w-full flex items-center justify-between bg-slate-800/50 p-2 rounded border transition-all hover:border-slate-600 hover:bg-slate-800 ${selectedRefinery?.id === refinery.id ? 'border-indigo-500 bg-slate-800' : 'border-slate-800'
+                      }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-1.5 h-8 rounded-full ${refinery.status === RefineryStatus.OPERATIONAL ? 'bg-emerald-500' :
+                        refinery.status === RefineryStatus.DAMAGED ? 'bg-orange-500' : 'bg-red-500'
+                        }`}></div>
+                      <div className="text-left">
+                        <div className="text-xs font-bold text-slate-200">{refinery.name}</div>
+                        <div className="text-[10px] text-slate-500 uppercase tracking-wide">{refinery.capacity}</div>
+                      </div>
+                    </div>
+                    <span className={`text-[10px] font-bold uppercase ${refinery.status === RefineryStatus.OPERATIONAL ? 'text-emerald-500' :
+                      refinery.status === RefineryStatus.DAMAGED ? 'text-orange-500' : 'text-red-500'
+                      }`}>
+                      {refinery.status}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="space-y-2 mb-6 pt-4 border-t border-slate-800">
@@ -299,158 +388,157 @@ export default function Sidebar({
               <span>Oil Pipeline</span>
             </div>
           </div>
-          <div className="flex items-center gap-2 text-xs">
-            <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.6)]"></div>
-            <span>Operational</span>
+          <div className="flex items-center justify-between text-xs">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.6)]"></div>
+              <span>Operational</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-1 rounded-full bg-blue-500"></span>
+              <span>Gas Pipeline</span>
+            </div>
           </div>
         </div>
 
-        <button
-          onClick={onAnalyze}
-          className="w-full py-3.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 group active:scale-[0.98]"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 group-hover:animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          Latest Intelligence Report
-        </button>
         <p className="text-xs text-center mt-3 text-slate-500">Powered by Gemini & Google Search</p>
       </div>
     );
   }
 
   // Active State (Detail View or Report)
-  return (
-    <div className="absolute top-0 right-0 h-full w-full md:w-[450px] bg-slate-900/95 backdrop-blur-xl border-l border-slate-800 shadow-2xl z-[1000] flex flex-col transition-transform duration-300 animate-slide-in-right">
-      {/* Header */}
-      <div className="p-5 border-b border-slate-800 flex justify-between items-center sticky top-0 bg-slate-900/95 backdrop-blur-xl z-10">
-        <h2 className="text-lg font-bold text-white">
-          {selectedRefinery ? 'Facility Details' : 'Intelligence Report'}
-        </h2>
-        <button
-          onClick={onClose}
-          className="p-2 hover:bg-slate-800 rounded-full text-slate-400 hover:text-white transition-colors active:bg-slate-700"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
+  if ((selectedRefinery && showDetails) || isAnalyzing || aiReport) {
+    return (
+      <div className="absolute top-0 right-0 h-full w-full md:w-[450px] bg-slate-900/95 backdrop-blur-xl border-l border-slate-800 shadow-2xl z-[1000] flex flex-col transition-transform duration-300 animate-slide-in-right">
+        {/* Header */}
+        <div className="p-5 border-b border-slate-800 flex justify-between items-center sticky top-0 bg-slate-900/95 backdrop-blur-xl z-10">
+          <h2 className="text-lg font-bold text-white">
+            {selectedRefinery ? 'Facility Details' : 'Intelligence Report'}
+          </h2>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-slate-800 rounded-full text-slate-400 hover:text-white transition-colors active:bg-slate-700"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
 
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto p-6 pb-20 md:pb-6 custom-scrollbar">
-        {selectedRefinery && (
-          <div className="space-y-6 animate-fade-in">
-            <div>
-              <StatusBadge status={selectedRefinery.status} />
-              <h3 className="text-3xl font-bold text-white mt-3 mb-1">{selectedRefinery.name}</h3>
-              <div className="text-slate-500 text-sm flex items-center gap-1">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                {selectedRefinery.lat.toFixed(4)}, {selectedRefinery.lng.toFixed(4)}
-              </div>
-            </div>
-
-            <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
-              <h4 className="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-2">Last Incident</h4>
-              <p className="text-white font-medium">
-                {selectedRefinery.lastIncidentDate || 'No recent major incidents recorded'}
-              </p>
-            </div>
-
-            <div>
-              <h4 className="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-3">Situation Report</h4>
-              <p className="text-slate-300 leading-relaxed bg-slate-800/30 p-4 rounded-lg border border-slate-800">
-                {selectedRefinery.description}
-              </p>
-            </div>
-
-            {/* Visual Evidence Section */}
-            {selectedRefinery.incidentVideoUrls && selectedRefinery.incidentVideoUrls.length > 0 && (
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto p-6 pb-20 md:pb-6 custom-scrollbar">
+          {selectedRefinery && (
+            <div className="space-y-6 animate-fade-in">
               <div>
-                <h4 className="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-3">Visual Evidence</h4>
-                <div className="space-y-4">
-                  {Array.from(new Set(selectedRefinery.incidentVideoUrls)).map((url, index) => {
-                    const tweetId = getTweetId(url);
-                    if (!tweetId) return null;
+                <StatusBadge status={selectedRefinery.status} />
+                <h3 className="text-3xl font-bold text-white mt-3 mb-1">{selectedRefinery.name}</h3>
+                <div className="text-slate-500 text-sm flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  {selectedRefinery.lat.toFixed(4)}, {selectedRefinery.lng.toFixed(4)}
+                </div>
+              </div>
 
-                    return (
-                      <div key={url} className="space-y-2">
-                        <div className="rounded-lg overflow-hidden border border-slate-700 bg-slate-950 shadow-xl">
-                          <TweetWidget tweetId={tweetId} />
+              <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
+                <h4 className="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-2">Last Incident</h4>
+                <p className="text-white font-medium">
+                  {selectedRefinery.lastIncidentDate || 'No recent major incidents recorded'}
+                </p>
+              </div>
+
+              <div>
+                <h4 className="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-3">Situation Report</h4>
+                <p className="text-slate-300 leading-relaxed bg-slate-800/30 p-4 rounded-lg border border-slate-800">
+                  {selectedRefinery.description}
+                </p>
+              </div>
+
+              {/* Visual Evidence Section */}
+              {selectedRefinery.incidentVideoUrls && selectedRefinery.incidentVideoUrls.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-3">Visual Evidence</h4>
+                  <div className="space-y-4">
+                    {Array.from(new Set(selectedRefinery.incidentVideoUrls)).map((url, index) => {
+                      const tweetId = getTweetId(url);
+                      if (!tweetId) return null;
+
+                      return (
+                        <div key={url} className="space-y-2">
+                          <div className="rounded-lg overflow-hidden border border-slate-700 bg-slate-950 shadow-xl">
+                            <TweetWidget tweetId={tweetId} />
+                          </div>
+                          <a
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center gap-2 w-full py-2 bg-slate-800 hover:bg-slate-700 hover:text-white text-xs font-bold text-slate-300 uppercase rounded transition-all"
+                          >
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                            Source {index + 1}
+                          </a>
                         </div>
-                        <a
-                          href={url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-2 w-full py-2 bg-slate-800 hover:bg-slate-700 hover:text-white text-xs font-bold text-slate-300 uppercase rounded transition-all"
-                        >
-                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-                          Source {index + 1}
-                        </a>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {!selectedRefinery && (
-          <div className="h-full">
-            {isAnalyzing ? (
-              <div className="flex flex-col items-center justify-center h-64 space-y-4">
-                <div className="relative w-16 h-16">
-                  <div className="absolute top-0 left-0 w-full h-full border-4 border-indigo-500/30 rounded-full"></div>
-                  <div className="absolute top-0 left-0 w-full h-full border-4 border-indigo-500 rounded-full border-t-transparent animate-spin"></div>
-                </div>
-                <p className="text-indigo-400 font-medium animate-pulse">Scanning live OSINT sources...</p>
-              </div>
-            ) : aiReport ? (
-              <div className="animate-fade-in">
-                <div className="prose prose-invert prose-sm max-w-none mb-8">
-                  <p className="whitespace-pre-line text-slate-300 leading-relaxed font-light">
-                    {aiReport}
-                  </p>
-                </div>
-
-                {groundingChunks && groundingChunks.length > 0 && (
-                  <div className="mt-8 pt-6 border-t border-slate-800">
-                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Sources</h4>
-                    <ul className="space-y-2">
-                      {groundingChunks.map((chunk, idx) => (
-                        chunk.web?.uri && (
-                          <li key={idx}>
-                            <a
-                              href={chunk.web.uri}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/50 hover:bg-slate-800 transition-colors group"
-                            >
-                              <div className="mt-1 text-indigo-500 group-hover:text-indigo-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                </svg>
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-indigo-400 truncate group-hover:underline">{chunk.web.title}</p>
-                                <p className="text-xs text-slate-500 truncate">{chunk.web.uri}</p>
-                              </div>
-                            </a>
-                          </li>
-                        )
-                      ))}
-                    </ul>
+                      );
+                    })}
                   </div>
-                )}
-              </div>
-            ) : null}
-          </div>
-        )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {!selectedRefinery && (
+            <div className="h-full">
+              {isAnalyzing ? (
+                <div className="flex flex-col items-center justify-center h-64 space-y-4">
+                  <div className="relative w-16 h-16">
+                    <div className="absolute top-0 left-0 w-full h-full border-4 border-indigo-500/30 rounded-full"></div>
+                    <div className="absolute top-0 left-0 w-full h-full border-4 border-indigo-500 rounded-full border-t-transparent animate-spin"></div>
+                  </div>
+                  <p className="text-indigo-400 font-medium animate-pulse">Scanning live OSINT sources...</p>
+                </div>
+              ) : aiReport ? (
+                <div className="animate-fade-in">
+                  <div className="prose prose-invert prose-sm max-w-none mb-8">
+                    <p className="whitespace-pre-line text-slate-300 leading-relaxed font-light">
+                      {aiReport}
+                    </p>
+                  </div>
+
+                  {groundingChunks && groundingChunks.length > 0 && (
+                    <div className="mt-8 pt-6 border-t border-slate-800">
+                      <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Sources</h4>
+                      <ul className="space-y-2">
+                        {groundingChunks.map((chunk, idx) => (
+                          chunk.web?.uri && (
+                            <li key={idx}>
+                              <a
+                                href={chunk.web.uri}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/50 hover:bg-slate-800 transition-colors group"
+                              >
+                                <div className="mt-1 text-indigo-500 group-hover:text-indigo-400">
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                  </svg>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-indigo-400 truncate group-hover:underline">{chunk.web.title}</p>
+                                  <p className="text-xs text-slate-500 truncate">{chunk.web.uri}</p>
+                                </div>
+                              </a>
+                            </li>
+                          )
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              ) : null}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 }

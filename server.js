@@ -19,79 +19,86 @@ const PORT = 3001;
 
 // Initialize Octokit with GitHub token
 const octokit = new Octokit({
-    auth: process.env.GITHUB_TOKEN
+  auth: process.env.GITHUB_TOKEN
 });
 
 // Get repository info from package.json or environment
 const getRepoInfo = () => {
-    try {
-        const packageJson = JSON.parse(readFileSync(join(__dirname, 'package.json'), 'utf-8'));
-        const repoUrl = packageJson.repository?.url || '';
-        const match = repoUrl.match(/github\.com[:/]([^/]+)\/([^/.]+)/);
+  try {
+    const packageJson = JSON.parse(readFileSync(join(__dirname, 'package.json'), 'utf-8'));
+    const repoUrl = packageJson.repository?.url || '';
+    const match = repoUrl.match(/github\.com[:/]([^/]+)\/([^/.]+)/);
 
-        if (match) {
-            return { owner: match[1], repo: match[2] };
-        }
-    } catch (e) {
-        console.error('Could not read package.json:', e);
+    if (match) {
+      return { owner: match[1], repo: match[2] };
     }
+  } catch (e) {
+    console.error('Could not read package.json:', e);
+  }
 
-    // Fallback to environment variables
-    return {
-        owner: process.env.GITHUB_OWNER || 'oskars',
-        repo: process.env.GITHUB_REPO || 'RefineryWatch-Russian-Infrastructure-Tracker'
-    };
+  // Fallback to environment variables
+  return {
+    owner: process.env.GITHUB_OWNER || 'fake-oskars',
+    repo: process.env.GITHUB_REPO || 'RefineryWatch-Russian-Infrastructure-Tracker'
+  };
 };
 
 app.post('/api/commit-refineries', async (req, res) => {
-    try {
-        const { refineries } = req.body;
+  try {
+    const { refineries } = req.body;
 
-        if (!refineries || !Array.isArray(refineries)) {
-            return res.status(400).json({ error: 'Invalid refineries data' });
-        }
-
-        const { owner, repo } = getRepoInfo();
-
-        // Get the current file content and SHA
-        const { data: currentFile } = await octokit.repos.getContent({
-            owner,
-            repo,
-            path: 'constants.ts',
-        });
-
-        // Generate new constants.ts content
-        const newContent = generateConstantsFile(refineries);
-        const encodedContent = Buffer.from(newContent).toString('base64');
-
-        // Commit the changes
-        const { data: commit } = await octokit.repos.createOrUpdateFileContents({
-            owner,
-            repo,
-            path: 'constants.ts',
-            message: `Update refinery data via Admin Panel - ${new Date().toISOString()}`,
-            content: encodedContent,
-            sha: currentFile.sha,
-            branch: 'main'
-        });
-
-        res.json({
-            success: true,
-            commit: commit.commit.sha,
-            message: 'Changes committed to GitHub successfully!'
-        });
-
-    } catch (error) {
-        console.error('GitHub commit error:', error);
-        res.status(500).json({
-            error: 'Failed to commit to GitHub',
-            details: error.message
-        });
+    if (!refineries || !Array.isArray(refineries)) {
+      return res.status(400).json({ error: 'Invalid refineries data' });
     }
+
+    const { owner, repo } = getRepoInfo();
+
+    // Get the current file content and SHA
+    const { data: currentFile } = await octokit.repos.getContent({
+      owner,
+      repo,
+      path: 'constants.ts',
+    });
+
+    // Generate new constants.ts content
+    const newContent = generateConstantsFile(refineries);
+    const encodedContent = Buffer.from(newContent).toString('base64');
+
+    // Commit the changes
+    const { data: commit } = await octokit.repos.createOrUpdateFileContents({
+      owner,
+      repo,
+      path: 'constants.ts',
+      message: `Update refinery data via Admin Panel - ${new Date().toISOString()}`,
+      content: encodedContent,
+      sha: currentFile.sha,
+      branch: 'main'
+    });
+
+    res.json({
+      success: true,
+      commit: commit.commit.sha,
+      message: 'Changes committed to GitHub successfully!'
+    });
+
+  } catch (error) {
+    console.error('GitHub commit error:', error);
+    console.error('Error details:', {
+      message: error.message,
+      status: error.status,
+      response: error.response?.data
+    });
+    res.status(500).json({
+      error: 'Failed to commit to GitHub',
+      details: error.message,
+      status: error.status,
+      hint: error.response?.data?.message || 'Check server logs for details'
+    });
+  }
 });
 
 function generateConstantsFile(refineries) {
-    const imports = `
+  const imports = `
 import { Refinery, RefineryStatus, Pipeline } from './types';
 
 export const INITIAL_REFINERIES: Refinery[] = ${JSON.stringify(refineries, null, 2)};
@@ -147,10 +154,10 @@ export const MAJOR_PIPELINES: Pipeline[] = [
 ];
 `;
 
-    return imports.trim();
+  return imports.trim();
 }
 
 app.listen(PORT, () => {
-    console.log(`✅ API Server running on http://localhost:${PORT}`);
-    console.log(`🔧 GitHub repo: ${getRepoInfo().owner}/${getRepoInfo().repo}`);
+  console.log(`✅ API Server running on http://localhost:${PORT}`);
+  console.log(`🔧 GitHub repo: ${getRepoInfo().owner}/${getRepoInfo().repo}`);
 });
