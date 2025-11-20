@@ -7,7 +7,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 54.5944,
     "lng": 39.7833,
     "status": "Damaged",
-    "description": "Ryazan Oil Refinery (Rosneft) has been reported as damaged due to a drone attack in March 2024. Reports indicate a fire broke out at the refinery as a result of the attack.",
+    "description": "Ryazan Oil Refinery (Rosneft) was reportedly damaged in a drone attack in March 2024, leading to a fire. Recent reports suggest ongoing repairs may be affecting its operational capacity.",
     "lastIncidentDate": "2024-03-13",
     "capacity": "17.1 mln t/y",
     "incidentVideoUrls": [
@@ -20,7 +20,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 56.05,
     "lng": 44.18,
     "status": "Damaged",
-    "description": "Lukoil-Nizhegorodnefteorgsintez (NORSI) has been reported as damaged due to a drone attack in March 2024. The extent of the damage is still being assessed, but it has impacted operations.",
+    "description": "Lukoil-Nizhegorodnefteorgsintez (NORSI) refinery was struck by a drone in March 2024, causing a fire and damage to a crude distillation unit. Operations were reportedly suspended following the attack.",
     "lastIncidentDate": "2024-03-12",
     "capacity": "17.0 mln t/y",
     "incidentVideoUrls": [
@@ -33,7 +33,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 53.148,
     "lng": 48.45,
     "status": "Damaged",
-    "description": "Syzran Refinery (Rosneft) experienced a fire in March 2024, suspected to be caused by a drone strike. This has likely impacted its operational capacity.",
+    "description": "Syzran Refinery (Rosneft) experienced a fire due to a drone attack in March 2024. The extent of the damage and current operational status are still being assessed.",
     "lastIncidentDate": "2024-03-16",
     "capacity": "7.0 mln t/y",
     "incidentVideoUrls": []
@@ -44,7 +44,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 53.1,
     "lng": 50.08,
     "status": "Damaged",
-    "description": "Kuibyshev Refinery (Rosneft) was reportedly hit by a drone strike in March 2024, resulting in a fire. The full extent of the damage is still being evaluated.",
+    "description": "Kuibyshev Refinery (Rosneft) was targeted by a drone attack in March 2024, resulting in a fire. Details on the current operational status are limited, but damage has been confirmed.",
     "lastIncidentDate": "2024-03-16",
     "capacity": "7.0 mln t/y",
     "incidentVideoUrls": []
@@ -55,7 +55,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 53.1,
     "lng": 49.95,
     "status": "Operational",
-    "description": "Novokuybyshevsk Refinery (Rosneft) is reportedly maintaining operations, despite regional security concerns.",
+    "description": "Reports suggest the Novokuybyshevsk Refinery (Rosneft) is currently operational, though there may be increased security measures in place following regional attacks.",
     "lastIncidentDate": "null",
     "capacity": "7.9 mln t/y",
     "incidentVideoUrls": []
@@ -66,7 +66,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 55.6385,
     "lng": 37.794,
     "status": "Operational",
-    "description": "Moscow Oil Refinery (Gazprom Neft) is reportedly operational, supplying fuel to the Moscow region.",
+    "description": "Moscow Oil Refinery (Gazprom Neft) is reportedly operational. There have been no confirmed reports of attacks or significant incidents affecting its operations.",
     "lastIncidentDate": "null",
     "capacity": "10.5 mln t/y",
     "incidentVideoUrls": []
@@ -77,7 +77,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 57.58,
     "lng": 39.83,
     "status": "Operational",
-    "description": "Slavneft-YANOS is reportedly operating without significant disruptions.",
+    "description": "Slavneft-YANOS is presumed to be operational, with no confirmed reports of drone strikes, fires, or sabotage impacting its activities.",
     "lastIncidentDate": "null",
     "capacity": "15.7 mln t/y",
     "incidentVideoUrls": []
@@ -88,7 +88,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 51.49,
     "lng": 45.94,
     "status": "Operational",
-    "description": "Saratov Refinery (Rosneft) is reportedly functioning, though under increased security.",
+    "description": "Saratov Refinery (Rosneft) is reportedly functioning without disruptions. No recent incidents have been reported to affect its operational status.",
     "lastIncidentDate": "null",
     "capacity": "7.0 mln t/y",
     "incidentVideoUrls": []
@@ -99,7 +99,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 44.11,
     "lng": 39.09,
     "status": "Offline",
-    "description": "Tuapse Oil Refinery (Rosneft) experienced a fire in January 2024, leading to a temporary shutdown of operations for repairs. It's reported that the Vacuum Distillation Unit was damaged.",
+    "description": "Tuapse Oil Refinery (Rosneft) experienced a fire in January 2024, leading to a temporary shutdown. Reports suggest that repairs are underway, but the refinery remains offline.",
     "lastIncidentDate": "2024-01-25",
     "capacity": "9.0 mln t/y",
     "incidentVideoUrls": []
@@ -110,7 +110,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 45.25,
     "lng": 38.12,
     "status": "Damaged",
-    "description": "Slavyansk-on-Kuban Refinery was reportedly hit by a drone strike in March 2024, resulting in a fire. Production at the refinery has been suspended.",
+    "description": "Slavyansk-on-Kuban Refinery was reportedly hit by a drone strike in March 2024, resulting in a fire. The extent of damage is still being assessed.",
     "lastIncidentDate": "2024-03-17",
     "capacity": "4.0 mln t/y",
     "incidentVideoUrls": []
@@ -121,8 +121,8 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 44.85,
     "lng": 38.6,
     "status": "Damaged",
-    "description": "Ilsky Refinery has been targeted by multiple drone attacks, causing significant damage and operational disruptions.",
-    "lastIncidentDate": "2024-06-22",
+    "description": "The Ilsky Refinery has been targeted multiple times, including reported attacks in June 2023 and May 2024. Damage has been reported, and operations have likely been disrupted.",
+    "lastIncidentDate": "2024-05-04",
     "capacity": "6.6 mln t/y",
     "incidentVideoUrls": []
   },
@@ -132,8 +132,8 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 47.78,
     "lng": 39.9,
     "status": "Operational",
-    "description": "Novoshakhtinsk Refinery is reportedly operational, although security measures have been reinforced.",
-    "lastIncidentDate": "null",
+    "description": "Novoshakhtinsk Refinery was reportedly attacked by drones in 2022. Recent information indicates that the refinery is currently operational.",
+    "lastIncidentDate": "2022-06-22",
     "capacity": "5.0 mln t/y",
     "incidentVideoUrls": []
   },
@@ -143,7 +143,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 48.5,
     "lng": 44.6,
     "status": "Operational",
-    "description": "Volgograd Refinery (Lukoil) is reportedly running, with no recent reports of disruptions.",
+    "description": "Volgograd Refinery (Lukoil) is currently operational, without recent reports of significant incidents.",
     "lastIncidentDate": "null",
     "capacity": "14.5 mln t/y",
     "incidentVideoUrls": []
@@ -154,7 +154,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 44.9,
     "lng": 38.84,
     "status": "Operational",
-    "description": "Afipsky Refinery is reportedly operating, though vigilance is high due to regional events.",
+    "description": "There are no confirmed reports of attacks or disruptions at the Afipsky Refinery; it is presumed to be operational.",
     "lastIncidentDate": "null",
     "capacity": "7.0 mln t/y",
     "incidentVideoUrls": []
@@ -165,7 +165,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 46.58,
     "lng": 48.05,
     "status": "Operational",
-    "description": "Astrakhan GPP (Gazprom) is reportedly functioning without interruptions.",
+    "description": "Astrakhan GPP (Gazprom) is reportedly operating normally, with no recent reports of incidents.",
     "lastIncidentDate": "null",
     "capacity": "3.3 mln t/y",
     "incidentVideoUrls": []
@@ -176,7 +176,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 54.96,
     "lng": 73.56,
     "status": "Operational",
-    "description": "Rostovka Gas Pipeline Hub is reportedly operating as normal.",
+    "description": "No specific information is available regarding attacks or disruptions at the Rostovka Gas Pipeline Hub. It is presumed to be operational.",
     "lastIncidentDate": "null",
     "incidentVideoUrls": []
   },
@@ -186,7 +186,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 55.08,
     "lng": 73.25,
     "status": "Operational",
-    "description": "Omsk Refinery (Gazprom Neft) is reportedly running, supplying fuel to its region.",
+    "description": "Omsk Refinery (Gazprom Neft) is a major refining hub and is presumed operational, with no recent reports of attacks or fires.",
     "lastIncidentDate": "null",
     "capacity": "21.0 mln t/y",
     "incidentVideoUrls": []
@@ -197,7 +197,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 54.82,
     "lng": 56.09,
     "status": "Operational",
-    "description": "Bashneft-Ufaneftekhim is reportedly operating steadily.",
+    "description": "Bashneft-Ufaneftekhim is reportedly operational, without recent reports of incidents.",
     "lastIncidentDate": "null",
     "capacity": "9.5 mln t/y",
     "incidentVideoUrls": []
@@ -208,7 +208,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 53.36,
     "lng": 55.93,
     "status": "Operational",
-    "description": "Gazprom Neftekhim Salavat is reportedly functioning as usual.",
+    "description": "Gazprom Neftekhim Salavat is presumed to be operational, as there are no recent reports of attacks or disruptions.",
     "lastIncidentDate": "null",
     "capacity": "10.0 mln t/y",
     "incidentVideoUrls": []
@@ -219,7 +219,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 55.58,
     "lng": 51.94,
     "status": "Operational",
-    "description": "Taneco (Tatneft) is reportedly operating without disturbances.",
+    "description": "Taneco (Tatneft) is a modern refinery complex and is reportedly operating without disruptions.",
     "lastIncidentDate": "null",
     "capacity": "8.7 mln t/y",
     "incidentVideoUrls": []
@@ -230,7 +230,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 55.6,
     "lng": 51.9,
     "status": "Operational",
-    "description": "TAIF-NK is reportedly running smoothly.",
+    "description": "TAIF-NK is presumed to be operational. No information is available on attacks.",
     "lastIncidentDate": "null",
     "capacity": "8.3 mln t/y",
     "incidentVideoUrls": []
@@ -241,7 +241,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 51.25,
     "lng": 58.52,
     "status": "Operational",
-    "description": "Orsknefteorgsintez is reportedly operating normally.",
+    "description": "Orsknefteorgsintez is reportedly operating without disruptions.",
     "lastIncidentDate": "null",
     "capacity": "6.6 mln t/y",
     "incidentVideoUrls": []
@@ -252,7 +252,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 57.94,
     "lng": 56.14,
     "status": "Operational",
-    "description": "Lukoil-Permnefteorgsintez is reportedly functioning without issues.",
+    "description": "Lukoil-Permnefteorgsintez is reportedly functioning without disruptions.",
     "capacity": "13.1 mln t/y",
     "incidentVideoUrls": [],
     "lastIncidentDate": "null"
@@ -263,7 +263,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 59.45,
     "lng": 32.03,
     "status": "Operational",
-    "description": "Kinef (Kirishi Refinery) is reportedly operating without disruptions.",
+    "description": "Kinef (Kirishi Refinery) is reportedly operational, with no recent reports of incidents.",
     "lastIncidentDate": "null",
     "capacity": "20.1 mln t/y",
     "incidentVideoUrls": []
@@ -274,7 +274,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 63.58,
     "lng": 53.72,
     "status": "Operational",
-    "description": "Lukoil-Ukhta is reportedly running as usual.",
+    "description": "Lukoil-Ukhta is reportedly operating normally, with no recent reports of attacks or disruptions.",
     "capacity": "4.2 mln t/y",
     "incidentVideoUrls": [],
     "lastIncidentDate": "null"
@@ -285,7 +285,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 52.5,
     "lng": 103.91,
     "status": "Operational",
-    "description": "Angarsk Petrochemical is reportedly operating without problems.",
+    "description": "Angarsk Petrochemical is presumed to be operational, with no recent reports of attacks.",
     "capacity": "10.2 mln t/y",
     "incidentVideoUrls": [],
     "lastIncidentDate": "null"
@@ -296,7 +296,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 56.28,
     "lng": 90.5,
     "status": "Operational",
-    "description": "Achinsk Refinery is reportedly functioning normally.",
+    "description": "Achinsk Refinery is reportedly operating without disruptions.",
     "capacity": "7.5 mln t/y",
     "incidentVideoUrls": [],
     "lastIncidentDate": "null"
@@ -307,7 +307,7 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "lat": 50.58,
     "lng": 137.08,
     "status": "Operational",
-    "description": "Komsomolsk Refinery is reportedly operating steadily.",
+    "description": "Komsomolsk Refinery is reportedly operational, with no recent reports of incidents.",
     "capacity": "8.3 mln t/y",
     "incidentVideoUrls": [],
     "lastIncidentDate": "null"
