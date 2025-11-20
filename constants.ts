@@ -58,7 +58,9 @@ export const INITIAL_REFINERIES: Refinery[] = [
     "description": "Reports suggest the Novokuybyshevsk Refinery (Rosneft) is currently operational, though there may be increased security measures in place following regional attacks.",
     "lastIncidentDate": "null",
     "capacity": "7.9 mln t/y",
-    "incidentVideoUrls": []
+    "incidentVideoUrls": [
+      "https://x.com/Osinttechnical/status/1798511326178025561?s=20"
+    ]
   },
   {
     "id": "moscow-mnpz",
