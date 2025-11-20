@@ -12,6 +12,7 @@ interface SidebarProps {
   onClose: () => void;
   groundingChunks: GroundingChunk[] | null;
   onSelectRefinery: (id: string) => void;
+  onSelectPipeline: (id: string) => void;
   showDetails: boolean;
 }
 
@@ -127,6 +128,7 @@ export default function Sidebar({
   onClose,
   groundingChunks,
   onSelectRefinery,
+  onSelectPipeline,
   showDetails
 }: SidebarProps) {
   // Default to minimized so the map is the primary view initially
@@ -291,11 +293,15 @@ export default function Sidebar({
                   <p className="text-xs text-slate-500 text-center py-4 italic">No pipelines match filter</p>
                 )}
                 {filteredPipelines.map(pipeline => (
-                  <div key={pipeline.id} className="flex items-center justify-between bg-slate-800/50 p-2 rounded border border-slate-800 hover:border-slate-700 transition-colors">
+                  <button
+                    key={pipeline.id}
+                    onClick={() => onSelectPipeline(pipeline.id)}
+                    className="w-full flex items-center justify-between bg-slate-800/50 p-2 rounded border border-slate-800 hover:border-slate-600 hover:bg-slate-800 transition-all group"
+                  >
                     <div className="flex items-center gap-3">
                       <div className={`w-1.5 h-8 rounded-full ${pipeline.type === 'oil' ? 'bg-amber-500' : 'bg-sky-500'}`}></div>
-                      <div>
-                        <div className="text-xs font-bold text-slate-200">{pipeline.name}</div>
+                      <div className="text-left">
+                        <div className="text-xs font-bold text-slate-200 group-hover:text-white transition-colors">{pipeline.name}</div>
                         <div className="text-[10px] text-slate-500 uppercase tracking-wide">{pipeline.type}</div>
                       </div>
                     </div>
@@ -309,7 +315,7 @@ export default function Sidebar({
                         {pipeline.status === 'destroyed' ? 'Destroyed' : pipeline.status}
                       </span>
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>

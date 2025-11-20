@@ -5,10 +5,11 @@ interface MapProps {
   refineries: Refinery[];
   pipelines: Pipeline[];
   selectedId: string | null;
+  selectedPipelineId: string | null;
   onSelect: (id: string) => void;
 }
 
-export default function Map({ refineries, pipelines, selectedId, onSelect }: MapProps) {
+export default function Map({ refineries, pipelines, selectedId, selectedPipelineId, onSelect }: MapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
@@ -107,6 +108,13 @@ export default function Map({ refineries, pipelines, selectedId, onSelect }: Map
         </div>
       `);
 
+      // Add hover tooltip
+      polyline.bindTooltip(pipeline.name, {
+        sticky: true,
+        opacity: 0.9,
+        className: 'bg-slate-900 text-white border border-slate-700 px-2 py-1 rounded text-xs font-bold'
+      });
+
       pipelinesRef.current.push(polyline);
     });
 
@@ -190,6 +198,27 @@ export default function Map({ refineries, pipelines, selectedId, onSelect }: Map
 
     map.flyTo([targetLat, selectedRefinery.lng], 7, { duration: 1.5 });
   }, [selectedId, refineries]);
+
+  // Fly to selected pipeline when selectedPipelineId changes
+  useEffect(() => {
+    if (!mapInstanceRef.current || !selectedPipelineId) return;
+
+    const selectedPipeline = pipelines.find(p => p.id === selectedPipelineId);
+    if (!selectedPipeline || !selectedPipeline.coordinates || selectedPipeline.coordinates.length === 0) return;
+
+    const map = mapInstanceRef.current;
+    const L = (window as any).L;
+
+    // Calculate the center point of the pipeline
+    const latSum = selectedPipeline.coordinates.reduce((sum, coord) => sum + coord[0], 0);
+    const lngSum = selectedPipeline.coordinates.reduce((sum, coord) => sum + coord[1], 0);
+    const centerLat = latSum / selectedPipeline.coordinates.length;
+    const centerLng = lngSum / selectedPipeline.coordinates.length;
+
+    // Fit bounds to show the entire pipeline
+    const bounds = L.latLngBounds(selectedPipeline.coordinates.map(coord => [coord[0], coord[1]]));
+    map.fitBounds(bounds, { padding: [50, 50], duration: 1.5 });
+  }, [selectedPipelineId, pipelines]);
 
   function getStatusColor(status: RefineryStatus) {
     switch (status) {

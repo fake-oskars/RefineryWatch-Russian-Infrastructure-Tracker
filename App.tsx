@@ -25,6 +25,7 @@ export default function App() {
   });
   const [pipelines] = useState<Pipeline[]>(MAJOR_PIPELINES);
   const [selectedRefineryId, setSelectedRefineryId] = useState<string | null>(null);
+  const [selectedPipelineId, setSelectedPipelineId] = useState<string | null>(null);
   const [aiReport, setAiReport] = useState<string | null>(null);
   const [groundingChunks, setGroundingChunks] = useState<GroundingChunk[] | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -242,8 +243,10 @@ export default function App() {
           refineries={refineries}
           pipelines={pipelines}
           selectedId={selectedRefineryId}
+          selectedPipelineId={selectedPipelineId}
           onSelect={(id) => {
             setSelectedRefineryId(id);
+            setSelectedPipelineId(null);
             setShowDetails(true);
           }}
         />
@@ -261,6 +264,12 @@ export default function App() {
         onAnalyze={() => setIsAdminOpen(true)} // Open Admin Panel instead of direct analyze
         onSelectRefinery={(id) => {
           setSelectedRefineryId(id);
+          setSelectedPipelineId(null);
+          setShowDetails(false);
+        }}
+        onSelectPipeline={(id) => {
+          setSelectedPipelineId(id);
+          setSelectedRefineryId(null);
           setShowDetails(false);
         }}
         onClose={() => {

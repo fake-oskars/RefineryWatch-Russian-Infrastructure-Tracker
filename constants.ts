@@ -356,12 +356,63 @@ export const MAJOR_PIPELINES: Pipeline[] = [
     ]
   },
   {
-    id: 'baltic-pipeline-system',
-    name: 'Baltic Pipeline System (Oil)',
-    type: 'oil',
+    'id': 'baltic-pipeline-system',
+    'name': 'Baltic Pipeline System (Oil)',
+    'type': 'oil',
+    'status': 'operational',
+    'coordinates': [
+      [57.6, 39.9], [59.4, 32.0], [60.3, 28.6]
+    ]
+  },
+  {
+    id: 'nord-stream-2',
+    name: 'Nord Stream 2 (Gas)',
+    type: 'gas',
+    status: 'suspended',
+    coordinates: [
+      [60.7, 28.5], [60.2, 26.8], [59.9, 24.5], [59.5, 22.0],
+      [57.0, 18.5], [55.5, 15.8], [54.3, 13.8], [54.1, 13.4]
+    ]
+  },
+  {
+    id: 'yamal-europe-gas',
+    name: 'Yamal-Europe Pipeline (Gas)',
+    type: 'gas',
     status: 'operational',
     coordinates: [
-      [57.6, 39.9], [59.4, 32.0], [60.3, 28.6]
+      [66.8, 66.6], [64.5, 69.5], [61.0, 69.0], [58.6, 68.6],
+      [56.8, 60.6], [55.8, 52.3], [54.5, 49.1], [53.9, 27.6],
+      [52.2, 21.0], [52.4, 16.9], [52.5, 13.4]
+    ]
+  },
+  {
+    id: 'turkish-stream-gas',
+    name: 'Turkish Stream (Gas)',
+    type: 'gas',
+    status: 'operational',
+    coordinates: [
+      [45.0, 36.7], [44.6, 37.3], [43.8, 38.5], [43.0, 39.7],
+      [42.5, 40.5], [42.0, 40.9], [41.0, 41.0], [41.0, 28.9]
+    ]
+  },
+  {
+    id: 'blue-stream-gas',
+    name: 'Blue Stream (Gas)',
+    type: 'gas',
+    status: 'operational',
+    coordinates: [
+      [44.9, 37.3], [44.0, 38.0], [43.0, 40.0], [42.0, 41.0], [41.7, 41.2]
+    ]
+  },
+  {
+    id: 'urengoy-pomary-uzhgorod-gas',
+    name: 'Urengoy-Pomary-Uzhgorod (Gas)',
+    type: 'gas',
+    status: 'operational',
+    coordinates: [
+      [65.9, 78.4], [61.8, 76.5], [58.6, 68.6], [56.8, 60.6],
+      [55.8, 53.2], [54.7, 49.1], [53.5, 46.0], [51.3, 37.8],
+      [50.4, 30.5], [49.4, 27.0], [48.6, 22.3]
     ]
   }
 ];
